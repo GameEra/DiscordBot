@@ -19,8 +19,10 @@ bot.on('ready', function (evt) {
 });
 bot.on('message', function (user, userID, channelID, message, evt) {
     // Our bot needs to know if it will execute a command
-    // It will listen for messages that will start with `!`
-    if (message.substring(0, 1) == '!') {
+    // It will listen for messages that will start with `?`
+    
+    logger.debug("channel id: " + channelID);
+    if (message.substring(0, 1) == '?' || message.substring(0,1) == '!') {
         var args = message.substring(1).split(' ');
         var cmd = args[0];
        
@@ -28,10 +30,19 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         switch(cmd) {
             // !ping
             case 'ping':
+                //debug messaging
+                logger.debug("ping recieved");
                 bot.sendMessage({
                     to: channelID,
                     message: 'Pong!'
                 });
+            break;
+
+            case 'ding':
+            bot.sendMessage({
+                to: channelID,
+                message: 'Dong!'
+            });
             break;
             // Just add any case commands if you want to..
          }
