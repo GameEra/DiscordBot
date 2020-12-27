@@ -22,27 +22,28 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     // It will listen for messages that will start with `?`
     
     logger.debug("channel id: " + channelID);
-    if (message.substring(0, 1) == '?' || message.substring(0,1) == '!') {
+    if (message.substring(0,1) == '!') {
         var args = message.substring(1).split(' ');
         var cmd = args[0];
+        var chance  = Math.floor(Math.random() * 2)
        
         args = args.splice(1);
         switch(cmd) {
             // !ping
-            case 'ping':
+            case 'flip':
                 //debug messaging
                 logger.debug("ping recieved");
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Pong!'
-                });
-            break;
-
-            case 'ding':
-            bot.sendMessage({
-                to: channelID,
-                message: 'Dong!'
-            });
+                if(chance == 0){
+                    bot.sendMessage({
+                        to: channelID,
+                        message: 'Heads'
+                    });
+                }else{
+                    bot.sendMessage({
+                        to: channelID,
+                        message: 'Tails'
+                    });
+                }
             break;
             // Just add any case commands if you want to..
          }
