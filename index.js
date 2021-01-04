@@ -2,6 +2,9 @@ const Discord = require('discord.js');
 var auth = require('./auth.json');
 const client = new Discord.Client();
 var logger = require('winston');
+const fs = require('fs');
+
+const prefix = '!';
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -10,31 +13,32 @@ logger.add(new logger.transports.Console, {
 });
 logger.level = 'debug';
 
-//TODO - Setup a structure for BOT STATUS tracking (Make sure cinnection isn't NULL before usage ie leaving)
-var connection = "";
+//Configure Command framework
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
+
 
 client.once('ready', () => {
-	logger.info('Ready!');
+    logger.debug('Online!');
+});
+
+client.on('message', async message => {
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+    const args = message.content.slice(prefix.length).split(/ +/);
+    const command = args.shift().toLowerCase();
+
+    if (command === 'ping') {
+        logger.debug('Ping Command Called');
+        client.commands.get('ping').execute(message, args);
+    }else if(command === 'rps'){
+        logger.debug('RPS Command Called');
+        client.commands.get('rps').execute(message, args);
+    }
 });
 
 client.login(auth.token);
-
-client.on('message', async message => {
-    // Join the same voice channel of the author of the message
-    if (message.content === '!join'){
-        if (message.member.voice.channel) {
-            connection = await message.member.voice.channel.join();
-        }
-    }
-    if (message.content === '!leave'){
-            connection.disconnect();
-    }
-});
-
-// client.on('message', message => {
-//     console.log(message.content);
-//     if (message.content === '!ping') {
-//         // send back "Pong." to the channel the message was sent in
-//         message.channel.send('Pong.');
-//     }
-// });
