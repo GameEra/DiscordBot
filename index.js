@@ -4,7 +4,7 @@ const client = new Discord.Client();
 var logger = require('winston');
 const fs = require('fs');
 
-const prefix = '!';
+const prefix = '?';
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -38,6 +38,9 @@ client.on('message', async message => {
     }else if(command === 'rps'){
         logger.debug('RPS Command Called');
         client.commands.get('rps').execute(message, args);
+    }else if(command === '8ball'){
+        logger.debug('8 Ball Command Called');
+        client.commands.get('8ball').execute(message, args);
     }
 });
 
