@@ -3,7 +3,6 @@ module.exports = {
     description: "Wizard Duel Command",
 
     execute(message, args) {
-
         if (!(message.mentions.members.size > 0)) {
             return message.channel.send('Mention another member to play in this format: !duel @Opponent');
         }
@@ -36,11 +35,28 @@ module.exports = {
 
     start(message, player1, player2) {
         message.channel.send(player1.toString() + ' is dueling ' + player2.toString() + '!');
+        var flag = false;
+        var p1Emoji = "";
+        var p2Emoji = "";
+        const duel = this;
 
         player1.send('Choose your Spell.').then(function (message) {
             message.react("✊")
             message.react("✋")
             message.react("✌️")
+            message.awaitReactions((reaction, user) => user === player1 && (reaction.emoji.name == '✊' || reaction.emoji.name == '✋' || reaction.emoji.name == '✌️'),
+                { max: 1, time: 10000 }).then(collected => {
+                    if(collected.first()){
+                        p1Emoji = collected.first().emoji.name;
+                        if(!flag){
+                            flag = true;
+                        }else{
+                            duel.score(message, player1, player2, p1Emoji, p2Emoji);
+                        }
+                    }
+                }).catch(() => {
+                    message.reply('No reaction after 10 seconds, operation canceled');
+                });
         }).catch(function () {
             console.log('error reacting to message')
         });
@@ -49,8 +65,25 @@ module.exports = {
             message.react("✊")
             message.react("✋")
             message.react("✌️")
+            message.awaitReactions((reaction, user) => user === player2 && (reaction.emoji.name == '✊' || reaction.emoji.name == '✋' || reaction.emoji.name == '✌️'),
+                { max: 1, time: 10000 }).then(collected => {
+                    if(collected.first()){
+                        p2Emoji = collected.first().emoji.name;
+                        if(!flag){
+                            flag = true;
+                        }else{
+                            duel.score(message, player1, player2, p1Emoji, p2Emoji);
+                        }
+                    }
+                }).catch(() => {
+                    message.reply('No reaction after 10 seconds, operation canceled');
+                });
         }).catch(function () {
             console.log('error reacting to message')
         });
+    },
+
+    score(message, player1, player2, p1Emoji, p2Emoji){
+        
     }
 }
