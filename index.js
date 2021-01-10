@@ -21,7 +21,6 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-
 client.once('ready', () => {
     logger.debug('Online!');
 });
