@@ -39,6 +39,7 @@ module.exports = {
         var p1Emoji = "";
         var p2Emoji = "";
         const duel = this;
+        const duelChannel = message.channel;
 
         player1.send('Choose your Spell.').then(function (message) {
             message.react("✊")
@@ -51,7 +52,7 @@ module.exports = {
                         if(!flag){
                             flag = true;
                         }else{
-                            duel.score(message, player1, player2, p1Emoji, p2Emoji);
+                            duel.score(duelChannel, player1, player2, p1Emoji, p2Emoji);
                         }
                     }
                 }).catch(() => {
@@ -72,7 +73,7 @@ module.exports = {
                         if(!flag){
                             flag = true;
                         }else{
-                            duel.score(message, player1, player2, p1Emoji, p2Emoji);
+                            duel.score(duelChannel, player1, player2, p1Emoji, p2Emoji);
                         }
                     }
                 }).catch(() => {
@@ -83,7 +84,25 @@ module.exports = {
         });
     },
 
-    score(message, player1, player2, p1Emoji, p2Emoji){
-        
+    score(duelChannel, player1, player2, p1Emoji, p2Emoji){
+        if (p1Emoji === p2Emoji) return duelChannel.send("It's a tie!");
+
+        switch (p1Emoji) {
+            case '✊': {
+                if (p2Emoji === '✋') return duelChannel.send(player2.toString() + " wins with " + p2Emoji);
+                else return duelChannel.send(player1.toString() + " wins with " + p1Emoji);
+            }
+            case '✋': {
+                if (p2Emoji === '✌️') return duelChannel.send(player2.toString() + " wins with " + p2Emoji);
+                else return duelChannel.send(player1.toString() + " wins with " + p1Emoji);    
+            }
+            case '✌️': {
+                if (p2Emoji === '✊') return duelChannel.send(player2.toString() + " wins with " + p2Emoji);
+                else return duelChannel.send(player1.toString() + " wins with " + p1Emoji);
+            }
+            default: {
+                return duelChannel.send("Some kind of error?");
+            }
+        }
     }
 }
